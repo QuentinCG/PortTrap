@@ -1,12 +1,10 @@
 # Docker usage for PortTrap
 
-This example shows how to build and run the minimal PortTrap image and how to make it work with Fail2Ban on the host.
+This example shows how to run the published PortTrap image and how to make it work with Fail2Ban on the host.
 
-Build locally:
+Published image:
 
-```sh
-docker build -t porttrap:local .
-```
+`ghcr.io/quentincg/porttrap:latest`
 
 Run (recommended): use host networking so PortTrap sees actual incoming connections and bind to the real host ports.
 
@@ -19,9 +17,18 @@ docker run -d \
   --name porttrap \
   --network host \
   -v /var/log/porttrap:/var/log/porttrap \
+  -e TCP_PORTS="20,21,22,23,445,1433,3306,3389,5432,5900,6379,8080,27017" \
+  -e UDP_PORTS="161,5060" \
   -e LOG_FILE=/var/log/porttrap/porttrap.log \
-  -e LOG_STDOUT=false \
-  porttrap:local
+  -e LOG_STDOUT=true \
+  -e LOG_FORMAT=text \
+  ghcr.io/quentincg/porttrap:latest
+```
+
+Build locally (optional):
+
+```sh
+docker build -t porttrap:local .
 ```
 
 Notes:
