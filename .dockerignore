@@ -1,0 +1,14 @@
+# Keep Docker context minimal and explicit
+.git
+.github
+.vscode
+
+# Build outputs and temp files
+bin
+porttrap
+*.log
+*.tmp
+
+# Docs and examples are not needed for image build
+examples
+README.md

@@ -7,9 +7,14 @@ WORKDIR /src
 COPY go.mod ./
 RUN go mod download
 
-# copy source and build
-COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+# copy only required source for a deterministic build context
+COPY cmd ./cmd
+COPY internal ./internal
+
+# build for the target platform selected by buildx
+ARG TARGETOS
+ARG TARGETARCH
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
     go build -ldflags "-s -w -X main.version=v1.0.0" -o /porttrap ./cmd/porttrap
 
 ## Final minimal image
