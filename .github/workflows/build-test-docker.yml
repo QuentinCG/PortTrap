@@ -3,12 +3,16 @@ name: CI + Docker image
 # Triggers:
 # - push on main and version tags: run tests + build/push image
 # - pull_request on main: run tests only
+# - schedule: monthly run (UTC)
 on:
   push:
     branches: [ main ]
     tags: ['v*']
   pull_request:
     branches: [ main ]
+  schedule:
+    # At 03:17 UTC on day-of-month 1.
+    - cron: '17 3 1 * *'
 
 jobs:
   # Fast CI gate: run Go tests before any image build/push.
@@ -30,10 +34,10 @@ jobs:
 
   # Docker packaging job:
   # - waits for tests to pass
-  # - runs only on push events (not on pull requests)
+  # - runs on push and scheduled events (not on pull requests)
   docker:
     needs: test
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
     permissions:
       # Required to pull source and push image to GHCR.
