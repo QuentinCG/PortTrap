@@ -3,7 +3,8 @@ FROM golang:1.26.6 AS builder
 WORKDIR /src
 
 # cache deps
-COPY go.mod go.sum ./
+# go.sum may not exist for projects without external dependencies.
+COPY go.mod ./
 RUN go mod download
 
 # copy source and build
