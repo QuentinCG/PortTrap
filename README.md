@@ -1,4 +1,5 @@
 # PortTrap
+[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/QuentinCG/PortTrap/blob/master/LICENSE.md) [![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/QuentinCG)
 
 PortTrap is a tiny Go program that detects incoming connections on configured ports and logs metadata (timestamp, protocol, source IP/port, destination port).
 
