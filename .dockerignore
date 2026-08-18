@@ -5,7 +5,9 @@
 
 # Build outputs and temp files
 bin
-porttrap
+# Exclude only a root-level built binary, not cmd/porttrap source directory
+/porttrap
+/porttrap.exe
 *.log
 *.tmp
 
