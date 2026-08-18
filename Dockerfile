@@ -1,5 +1,5 @@
 # Multi-stage build: compile static Go binary, then produce minimal image
-FROM golang:1.27 AS builder
+FROM golang:1.26.6 AS builder
 WORKDIR /src
 
 # cache deps
