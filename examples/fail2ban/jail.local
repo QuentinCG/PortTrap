@@ -7,11 +7,12 @@ enabled = true
 filter = porttrap
 # path to the PortTrap log file (adjust if you run it elsewhere)
 logpath = /var/log/porttrap/porttrap.log
-# One detection -> immediate ban
-# Set maxretry=1 to ban on the first matched event
+
+# !! One detection -> immediate ban !!
+# If 1 port scan in the last 10 min, then ban the IP for 1 day
 maxretry = 1
 findtime = 600
-bantime = 3600
+bantime = 86400
 
-# Use the system default action (iptables/nftables) or customize
-# action = iptables-allports
+# Ban the IP for ALL ports
+action = nftables[type=allports]
