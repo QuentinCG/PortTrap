@@ -15,4 +15,4 @@ findtime = 600
 bantime = 86400
 
 # Ban the IP for ALL ports
-action = nftables[type=allports]
+action = nftables[type=allports,chain_hook=forward]
