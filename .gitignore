@@ -1,4 +1,5 @@
 bin/
-porttrap
+/porttrap
+/porttrap.exe
 *.log
 *.tmp
