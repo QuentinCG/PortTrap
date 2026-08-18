@@ -1,0 +1,17 @@
+## PortTrap jail
+## WARNING: with the settings below, a single matched event will trigger a ban.
+## This is intentional if you want immediate blocking on any connection to forbidden ports.
+## Adjust `maxretry`, `findtime` and `bantime` to tune sensitivity.
+[porttrap]
+enabled = true
+filter = porttrap
+# path to the PortTrap log file (adjust if you run it elsewhere)
+logpath = /var/log/porttrap/porttrap.log
+# One detection -> immediate ban
+# Set maxretry=1 to ban on the first matched event
+maxretry = 1
+findtime = 600
+bantime = 3600
+
+# Use the system default action (iptables/nftables) or customize
+# action = iptables-allports

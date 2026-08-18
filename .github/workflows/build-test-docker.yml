@@ -1,0 +1,69 @@
+name: CI + Docker image
+
+# Triggers:
+# - push on main and version tags: run tests + build/push image
+# - pull_request on main: run tests only
+on:
+  push:
+    branches: [ main ]
+    tags: ['v*']
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Fast CI gate: run Go tests before any image build/push.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.27'
+
+      - name: Run tests
+        run: |
+          go test ./... -v
+
+  # Docker packaging job:
+  # - waits for tests to pass
+  # - runs only on push events (not on pull requests)
+  docker:
+    needs: test
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      # Required to pull source and push image to GHCR.
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          # push=true because this job only runs on push events.
+          push: true
+          # Publish multi-arch image.
+          platforms: linux/amd64,linux/arm64
+          # latest + immutable sha tag.
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/porttrap:latest
+            ghcr.io/${{ github.repository_owner }}/porttrap:${{ github.sha }}
