@@ -10,8 +10,9 @@ It intentionally does not emulate protocols, respond to clients, or run external
 ## Docker (recommended)
 
 Use the ready-to-run image:
-
 `ghcr.io/quentincg/porttrap:latest`
+
+This image is ~4MB and it uses ~8MB RAM and 0.1% (of a single 2.4GHz CPU).
 
 Run example:
 
