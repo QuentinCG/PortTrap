@@ -76,11 +76,12 @@ jobs:
           # Keep a single moving tag; older GHCR versions are cleaned up below.
           tags: |
             ghcr.io/${{ steps.vars.outputs.owner_lc }}/porttrap:latest
+            ghcr.io/${{ steps.vars.outputs.owner_lc }}/porttrap:${{ github.ref_name }}
 
       - name: Delete old GHCR versions
         uses: actions/delete-package-versions@v5
         with:
           package-name: porttrap
           package-type: container
-          min-versions-to-keep: 1
+          min-versions-to-keep: 5
           delete-only-untagged-versions: true
