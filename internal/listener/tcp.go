@@ -9,6 +9,10 @@ import (
     "porttrap/internal/logging"
 )
 
+// logLoopback controls whether connections from loopback sources are logged.
+// Disabled in production to keep honeypot logs clean (e.g. the container healthcheck).
+var logLoopback = false
+
 func ServeTCP(ctx context.Context, l net.Listener, proto string, logger *logging.Logger, sem chan struct{}, stop <-chan struct{}) error {
     defer l.Close()
     for {
@@ -29,7 +33,7 @@ func ServeTCP(ctx context.Context, l net.Listener, proto string, logger *logging
         }
 
         // ignore loopback sources (e.g. the container healthcheck) to keep honeypot logs clean
-        if isLoopback(hostPart(conn.RemoteAddr().String())) {
+        if !logLoopback && isLoopback(hostPart(conn.RemoteAddr().String())) {
             conn.Close()
             continue
         }

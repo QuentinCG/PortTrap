@@ -11,6 +11,8 @@ import (
 )
 
 func TestTCPIntegration(t *testing.T) {
+    logLoopback = true
+    defer func() { logLoopback = false }()
     cfg := &config.Config{LogStdout: true, LogFile: "", LogFormat: "text", LogMaxSizeMB: 10, LogMaxFiles: 2, MaxConns: 10}
     logger, err := logging.NewLogger(cfg)
     if err != nil {
