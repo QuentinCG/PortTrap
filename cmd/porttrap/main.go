@@ -13,9 +13,8 @@ import (
     "porttrap/internal/config"
     "porttrap/internal/server"
     "porttrap/internal/logging"
+    "porttrap/internal/version"
 )
-
-var version = "v1.0.0"
 
 func main() {
     showVersion := flag.Bool("version", false, "show version")
@@ -23,7 +22,7 @@ func main() {
     flag.Parse()
 
     if *showVersion {
-        fmt.Println("PortTrap", version)
+        fmt.Println("PortTrap", version.Version)
         return
     }
 
@@ -37,7 +36,7 @@ func main() {
         os.Exit(runHealthcheck(cfg))
     }
 
-    fmt.Printf("PortTrap %s\n", version)
+    fmt.Printf("PortTrap %s\n", version.Version)
     fmt.Printf("TCP ports: %s\n", cfg.TCPPorts.String())
     fmt.Printf("UDP ports: %s\n", cfg.UDPPorts.String())
 

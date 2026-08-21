@@ -14,8 +14,9 @@ COPY internal ./internal
 # build for the target platform selected by buildx
 ARG TARGETOS
 ARG TARGETARCH
+# version is embedded from internal/version/VERSION (single source of truth)
 RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
-    go build -ldflags "-s -w -X main.version=v1.0.0" -o /porttrap ./cmd/porttrap
+    go build -ldflags "-s -w" -o /porttrap ./cmd/porttrap
 
 ## Final minimal image
 FROM scratch

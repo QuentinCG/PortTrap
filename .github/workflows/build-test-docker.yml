@@ -1,13 +1,12 @@
 name: CI + Docker image
 
 # Triggers:
-# - push on main and version tags: run tests + build/push image
+# - push on main: run tests + build/push image (version comes from internal/version/VERSION)
 # - pull_request on main: run tests only
 # - schedule: monthly run (UTC)
 on:
   push:
     branches: [ main ]
-    tags: ['v*']
   pull_request:
     branches: [ main ]
   schedule:
@@ -65,6 +64,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Read version
+        id: ver
+        run: |
+          v="$(tr -d '[:space:]' < internal/version/VERSION)"
+          echo "major=${v%%.*}" >> "$GITHUB_OUTPUT"   # 1.0.0 -> 1
+          echo "minor=${v%.*}" >> "$GITHUB_OUTPUT"    # 1.0.0 -> 1.0
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -73,10 +79,13 @@ jobs:
           push: true
           # Publish multi-arch image.
           platforms: linux/amd64,linux/arm64
-          # Keep a single moving tag; older GHCR versions are cleaned up below.
+          # Tags derived from internal/version/VERSION: latest, major and major.minor.
+          # The full patch tag (e.g. 1.0.0) is intentionally omitted: it adds little value
+          # over major.minor and keeps the number of stored image versions down.
           tags: |
             ghcr.io/${{ steps.vars.outputs.owner_lc }}/porttrap:latest
-            ghcr.io/${{ steps.vars.outputs.owner_lc }}/porttrap:${{ github.ref_name }}
+            ghcr.io/${{ steps.vars.outputs.owner_lc }}/porttrap:${{ steps.ver.outputs.major }}
+            ghcr.io/${{ steps.vars.outputs.owner_lc }}/porttrap:${{ steps.ver.outputs.minor }}
 
       - name: Delete old GHCR versions
         uses: actions/delete-package-versions@v5
