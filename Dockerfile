@@ -21,4 +21,8 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
 FROM scratch
 COPY --from=builder /porttrap /porttrap
 
+# scratch has no shell/curl, so the binary probes itself via its -healthcheck flag
+HEALTHCHECK --interval=5m --timeout=5s --start-period=5s --retries=3 \
+    CMD ["/porttrap", "-healthcheck"]
+
 ENTRYPOINT ["/porttrap"]

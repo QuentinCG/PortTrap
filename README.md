@@ -38,6 +38,7 @@ Notes:
 - `--network host` is recommended for fast configuration of PortTrap to bind host ports directly.
 - Mounting `/var/log/porttrap` lets host Fail2Ban read PortTrap logs.
 - If you do not use host networking, publish ports manually and add `--cap-add=NET_BIND_SERVICE` for privileged ports.
+- It includes a Docker `HEALTHCHECK`. It connects to every `TCP_PORTS` on `127.0.0.1` (UDP is not checked). Status: `docker inspect --format '{{.State.Health.Status}}' porttrap`.
 
 More Docker usage details at <a target="_blank" href="https://github.com/QuentinCG/PortTrap/tree/main/examples/docker">examples/docker/README.md</a>.
 
