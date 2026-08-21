@@ -28,6 +28,12 @@ func ServeTCP(ctx context.Context, l net.Listener, proto string, logger *logging
             continue
         }
 
+        // ignore loopback sources (e.g. the container healthcheck) to keep honeypot logs clean
+        if isLoopback(hostPart(conn.RemoteAddr().String())) {
+            conn.Close()
+            continue
+        }
+
         // try acquire semaphore
         select {
         case sem <- struct{}{}:
@@ -70,6 +76,11 @@ func hostPart(addr string) string {
         return addr
     }
     return h
+}
+
+func isLoopback(host string) bool {
+    ip := net.ParseIP(host)
+    return ip != nil && ip.IsLoopback()
 }
 
 func portPart(addr string) int {

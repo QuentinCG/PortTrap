@@ -27,6 +27,10 @@ func ServeUDP(ctx context.Context, conn *net.UDPConn, logger *logging.Logger) er
             return err
         }
         if n > 0 {
+            // ignore loopback sources (e.g. local health/test probes) to keep honeypot logs clean
+            if addr.IP.IsLoopback() {
+                continue
+            }
             ev := logging.Event{
                 Timestamp:       time.Now().UTC(),
                 Protocol:        "udp",
